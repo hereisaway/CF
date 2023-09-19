@@ -1,0 +1,62 @@
+还是交换顺序问题的的那个关键操作：如果有一个元素可以和任意元素交换，那么以这个元素为中介，任意元素其实都可以交换。对于这道题，任何两个gcd=min(ai)的元素都可以交换，
+而任何一个元素，只要含有m这个因子，和min(ai)的gcd都是min(ai)，因此任意元素只要能被min整除，都可以和min交换，因此所有可以被min整除的元素都可以相互交换。
+
+而所有可以相互交换的元素，最终都一定能排成非减序列。所以把能交换的元素排成非减序列，不能交换的元素保持不动后，如果此时整个序列是非减的，那么整个序列就可以通过交换变成非减序列。
+明确了上述性质，接下来要做的就是一个模拟，把所有能被最小元素整除的元素都拿出来排序，排完序后再放回原数组。由于不能移动的元素要保持不动，排序后的元素只能放回之前取元素形成的空位中。
+想要做到这一点，需要记录排序数组的每一个位置在原数组中对应的位置。最后遍历一遍原数组，看是否不减。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep1(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep2(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+const int N=1e5+10;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+vector<int>a;//分别存原数组和排序数组
+vector<int>b;
+int pos[N];
+int main(){
+	int m=rd();
+	while(m--){
+		a.clear();//重置
+		b.clear();
+		int n=rd();
+		int mn=inf;
+		rep1(i,1,n){
+			int t=rd();
+			a.push_back(t);//放入原数组
+			mn=min(mn,t);//找最小
+		}
+		int now=0;
+		rep1(i,0,n-1)
+			if(a[i]%mn==0){
+				b.push_back(a[i]);//能移动的元素放进排序数组
+				pos[now++]=i;//记录排序数组该位置对应的原始数组的位置
+			}
+		sort(b.begin(),b.end());//排序
+		rep1(i,0,b.size()-1){
+			a[pos[i]]=b[i];//排序数组元素放回原数组的空位
+		}
+		int flag=1;
+		rep1(i,0,n-2)
+			if(a[i]>a[i+1]){//遍历原数组检查是否非减
+				flag=0;
+				break; 
+			}
+		if(flag==1)cout<<"YES"<<endl;
+		else cout<<"NO"<<endl;
+	}
+}
