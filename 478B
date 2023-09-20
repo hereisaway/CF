@@ -1,0 +1,56 @@
+排列组合题，问把n人分成m组，组内两两都是朋友，问最大和最小朋友对数，每组至少一个人。
+有一个小结论，想出来就简单了，就是C(n,2)实际上是一个函数，而他关于n的导数在n在n很大时是正的且单增的，具体证明把它写成多项式形式很容易得出。
+
+一个n个人的组中的关系数就是C(n,2)，对于最大值，如果尽可能把人都集中在一组，这样这一组人就会最多，考虑上述结论，人越多，再加入一个人，形成的新关系就越多，对总关系数增长的贡献也越大。
+因此在每组都有一个人的基础上，每加入一个人，都把他放进人数最多的一组，最终m-1组1人，1组n-m+1人，此时关系数最大。
+
+对于最小值，根据上述结论很容易看出应该把所有人尽量均匀分配，也就是先给每组n/m人，再把剩下的人分到不同组。
+
+这种题考的可能就是所谓的数学直觉，或者说思维能力，上述小结论对于有思维能力强的人可能一眼就看出来了，然后这题就简单了。
+
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep1(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep2(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+const int N=1e5+10;
+ll rd(void){
+	ll x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+const int mod=1e6;
+map<string,int>h;
+int main(){
+	ll ans1,ans2;
+	ll n=rd(),m=rd();
+	if(n%m==0){
+		if(n/m>1)
+			ans1=n/m*(n/m-1)/2*m;
+		else ans1=0;
+	}
+	else{
+		ll extra=n%m;
+		ll group=n/m;
+		//cout<<group<<' '<<extra<<endl;
+		if(group>1){
+			ans1=group*(group-1)/2*m;
+			ans1+=extra*group;
+		}
+		else ans1=extra;
+	}
+	if(n==m)ans2=0;
+	else ans2=(n-m)*(n-m+1)/2;
+	cout<<ans1<<' '<<ans2;
+}
+
