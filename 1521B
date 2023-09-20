@@ -1,0 +1,46 @@
+经典构造题。
+不是从初始条件开始推，而是直接构造一个符合目标的结果，然后再返回来证明它可以由初始条件推出来。
+
+要求数列中任何一个数都和相邻的数互质，如果正着想，这里有一个ai-1，我们要让他和ai互质，于是我们修改ai，问题是和ai-1互质的数有无数个，我们该把ai修改成哪一个？
+同时，修改数是有条件的，只有min(ai=aj)=min(x,y)，才能把ai和aj分别修改成x,y。显然每次都令aj为最大元素，y=aj，就可以修改任意一个元素，如果按这个策略修改元素就引出一个问题，
+修改ai后会不会改变最大值？如果改变最大值，就要寻找最大值和最大值位置；并且x要取多少也是个问题。总之就是很复杂。
+
+用构造的方法想就快多了，要构造一个相邻元素都互质的序列，最简单的方式就是让相邻元素都差1，只差1的两个数一定是互质的。而把原数组成相邻差一的数组也很简单，
+只要进行i,minpos,min+abs(i-min),min就可以了。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep1(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep2(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+const int N=2e5+10;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int a[N];
+int main(){
+	int t=rd();
+	while(t--){
+		int n=rd(),mn=inf,pos;
+		rep1(i,1,n){
+			a[i]=rd();
+			if(a[i]<mn)mn=a[i],pos=i;
+		}
+		cout<<n-1<<endl;
+		rep1(i,1,n)
+			if(i!=pos)
+				cout<<i<<' '<<pos<<' '<<mn+abs(pos-i)<<' '<<mn<<endl;
+	}
+}
+
