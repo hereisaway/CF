@@ -1,0 +1,46 @@
+在思维题里算思路比较简单的，但是模拟起来有点麻烦。人和人之间要保持k的社交距离，初始做了一些人，问还能坐多少人。
+显然每次加人应该是以连续的，没有人的区间为一个单位的，因为不仅需要考虑这个区间左边的人的社交距离，也要考虑右边的人。因此每找到一个两个1围起来的区间，就计算一次加人。
+寻找两个1围起来的区间可以使用双指针。每次加人，其实每个人只需要从自己位置开始，往右1+k大小的空间，因为左边的人也占了k+1的空间，所以这样取空间可以保证两边都有k的空间。
+这样算占用的话，实际上是把区间左边的那个人占用的空间也算进来了，但是那个人使本来就在的，不是这次加的，因此计算加入的人数时，需要把这个人减掉。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep1(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep2(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+const int N=2e5+10;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+char a[N];
+int main(){
+	int t=rd();
+	while(t--){
+		int n=rd(),k=rd(),ans=0;
+		scanf("%s",a+1);
+	for(int i=1;i<=n;){
+		int j=i+1;//右指针从左指针右边第一个位置开始移动
+		for(;j<=n&&a[j]=='0';j++);//右指针移动到下一个1的位置
+		int l=a[i]=='1'?k:0;//如果左边不是边界，就有一个人，需要占用k的空间
+		int r=a[j]=='1'&&j<=n?k:0;//右边同理
+		int len=j-i;//初始成序列长度
+		if(l==k)len--;
+		len-=l+r;//减去左右人占用的空间
+		if(len>0)ans+=(len+k)/(k+1);//除以每个人需要的空间，计算能加几个人
+		i=j; //坐指针的位置更新为右指针
+		} 
+	cout<<ans<<endl;
+	}
+}
+
