@@ -1,0 +1,50 @@
+又一道交换位置以达成单调的问题，关键依然是找到一个可以和所有元素交换的元素，这样所有元素就都可以通过这个元素实现交换了。
+这题的特殊点在于元素有01两种，只有种类不同的元素才能交换，因此需要两个中介元素，一个是0，可以和所有1交换，进而允许所有1交换，另一个是1，同理可以允许所有0交换。
+因此具体判断就是能不能找到一个0元素和一个1元素，如果能，就可以排成单调序列，如果不能，这个序列就是不能修改的，那么就要看初始序列是否是单调的。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep1(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep2(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+const int N=1e5+10;
+ll rd(void){
+	ll x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int main(){
+	int t=rd();
+	while(t--){
+		int n=rd();
+		bool flag=1;
+		int now=rd();
+		int before=now;
+		rep1(i,2,n){//统计是否单调
+			int now=rd();//统计单调不需要全存，可以滚动
+			if(before>now)
+				flag=0;
+			before=now;
+		}
+		int cnt=0;//计算所有元素标签和
+		rep1(i,1,n){
+			int t=rd();
+			cnt+=t;
+		}
+		if(cnt==0||cnt==n)//如果和为0，就是全是0，和为n就是全是1，都是全都不能交换
+			if(flag==1)cout<<"Yes"<<endl;//如果初始是单调的就能单调
+			else cout<<"No"<<endl;//初始不是单调的就不能
+		else//如果至少有一个0和至少一个1
+			cout<<"Yes"<<endl;//可以交换成单调
+	} 
+}
+
