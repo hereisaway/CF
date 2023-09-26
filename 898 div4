@@ -1,0 +1,166 @@
+G 图论题，这题居然是1700，看来我图论水平还行。n个点n个边，说明有且只有一个环，多模拟几次可以发现，只要进入环中，就一定能逃脱追捕，
+这在直觉上很显然。具体证明也不难，想要在环中追人，有两个方向可以选择，而被追的人可以预测警察下一步的行动，
+因此只要沿着警察没走的另一条路跑就行了，这样警察永远追不上。
+因此问题转化成了能否在被抓之前进入环，先从逃犯的起点开始搜，找到进入环的点a，并计算最短距离d1，然后再计算警察到a的最短距离d2，
+如果d1<d2，就能在被抓之前进入环，就可以永远不被抓。
+这里面唯一有难度地方在于找到进入环的点，我们以往搜索找某个点都是在树上做的，而这个图不是树，因此搜索的过程可能和习惯的不太一样，
+具体来说，这个过程只能借助深搜，深搜搜到的第一个到过的节点就是进入环的节点。
+因为第一次搜到了到过的节点，实际上意味着已经绕环一圈了，回到了第一次进入环的点。
+找到进入环的点后，按理讲不难了，搜最短路程就行，最优解显然是bfs。开始用成了dfs，怎么调都过不了，这个故事告诉我们最短路一定优先用bfs。
+
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+int head[N],cnt,d[N],loopin;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+struct edge{
+	int v,next;
+}e[N*2];
+void add(int u,int v){
+	e[++cnt].v=v;
+	e[cnt].next=head[u];
+	head[u]=cnt;
+}
+int find_dis(int s){
+	memset(d,inf,sizeof d);
+	d[s]=0;
+	queue<int>q;
+	q.push(s);
+	while(!q.empty()){
+		int u=q.front();
+		q.pop();
+		for(int i=head[u];i;i=e[i].next){
+			int v=e[i].v;
+			if(v==u||d[v]!=inf)continue;
+			d[v]=d[u]+1;
+			q.push(v);
+		}
+	}
+	return d[loopin];
+}
+void dfs(int u,int fa){
+	for(int i=head[u];i;i=e[i].next){
+		int v=e[i].v;
+		if(v==fa)continue;
+		//cout<<v<<endl;
+		if(d[v]!=inf){
+			if(loopin==0)
+				loopin=v;
+		}
+		else{
+			d[v]=d[u]+1;
+			dfs(v,u);
+		}
+	}
+}
+int main(){
+	int t=rd();
+	while(t--){
+		int n=rd(),a=rd(),b=rd();
+		cnt=0;
+		memset(head,0,sizeof head);
+		rep(i,1,n){
+			int u=rd(),v=rd();
+			add(u,v),add(v,u);
+		}
+		if(a==b){
+			cout<<"NO"<<endl;
+			continue;
+		}
+		loopin=0;
+		memset(d,inf,sizeof d);//用距离同时表示是否到过，都初始化为inf，等于inf就是没到过
+		d[b]=0;
+		dfs(b,-1);//找入环点
+		int d1=find_dis(b);//计算到该点距离
+		int d2=find_dis(a);
+		//cout<<loopin<<' '<<d1<<' '<<d2<<endl;
+		if(d1<d2)cout<<"YES"<<endl;//能先进环就能跑
+		else cout<<"NO"<<endl;
+	}
+}
+
+F 只能选一个a[i]%a[i+1]==0的序列上摘果子，摘果子总数不能超过k，问可以摘果子的最长序列有多长？
+这种在满足某个条件下的最值问题，一眼二分，check内检验当前值能不能满足题目条件。
+对这题就是检验能不能找到一个长度为x，可以摘果子的序列，让果子总数不超过k。
+这里需要注意的是这个长度x，有一个序列可行，x就可行，因此要维护长x的序列的果子数的最小值，而不是最大值。
+为了每次check能快速找到所有长度大于等于x，能摘果子的序列，需要先预处理一下，
+算出从i开始能摘果子的最长序列的长度len[i]，然后每次check时，只用在len[i]>=x的序列中讨论就行了。
+
+上述其实都不难，关键在于如何预处理len，如果暴力地枚举每个点，然后再枚举该点后面的所有点，显然是O(n^2)，
+而cf比赛给的2e5就是为了卡掉所有n^2的算法，这显然是不行的。这就引出另一个大问题，如何给一个算法复杂度降维？
+一个重要的思想是，减少重复，也就是说如果某个值可以用在下一轮中，下一轮就不要重新算了，而是可以利用这一轮的结果，
+爆搜转记忆化搜索（dp）就是这样的思路，对于本题这种小思维题，往往都有一个n^2的暴力解法，
+然后也会有一个n或nlogn的递推解法，也就是说递推往往可以加速。
+思考一下，对于一个位置i，如果h[i-1]%h[i]=0，那么这个点就属于h[i-1]所属的序列，
+如果不能整除，那么她就开始了一个新的序列，但是如果这样做，对每一个i，需要把前面所有包含i的序列的长度都加1，这还是n^2的。
+这实际上是因为递推的方向反了，从前往后推，在尾部增加一个点，可能对前面所有序列都有影响，
+但如果从后往前推，在头部增加一个点，如果i和i+1可以整除，那么i可以继承以i+1为开头的序列的长度，
+如果不能整除，那么i属于一个新的序列，i开头的序列长度为1.
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+int a[N],h[N],sum[N],len[N];
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+bool check(int x,int k,int n){
+	int ans=inf;
+	rep(i,1,n)
+		if(len[i]>=x)
+			ans=min(ans,sum[i+x-1]-sum[i-1]);
+	if(ans>k)return 0;
+	else return 1;
+}
+int main(){
+	int t=rd();
+	while(t--){
+		int n=rd(),k=rd();
+		rep(i,1,n)a[i]=rd(),sum[i]=sum[i-1]+a[i];//前缀和预处理果子数
+		rep(i,1,n)h[i]=rd();
+		len[n]=1;
+		rep1(i,n,2)
+			if(h[i-1]%h[i]==0)len[i-1]=len[i]+1;//根据高度递推每个点的len
+			else len[i-1]=1;
+		int l=1,r=n;
+		while(l<=r){
+			int mid=l+r>>1;
+			if(check(mid,k,n))l=mid+1;
+			else r=mid-1; 
+		}
+		cout<<r<<endl;
+	}
+}
