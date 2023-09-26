@@ -1,0 +1,278 @@
+A two vessel，两杯水初始分别有a,b单位水，可以用一个容积为c的空杯子，从一杯往另一杯里转水，问最少需要操作几次可以使两杯体积一样。每次转水都是使一杯水减少，另一杯水增加等量的水，对最终目标的贡献实际上是2乘这次转移的水。为了尽量快，每次肯定都转移最大容积c。需要转移的次数可能不是整数次，但最后一次不满c的水也需要一次转移，因此整除后如果有余数就再加一。
+
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=3e5+10;
+int a[N],h[N],sum[N],len[N];
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int main(){
+	int t=rd();
+	while(t--){
+		int a=rd(),b=rd(),c=rd(),ans;
+		int dif=abs(a-b);
+		ans=dif/(2*c);
+		if(dif%(2*c)!=0)ans++;
+		cout<<ans<<endl;
+	}
+}
+
+ 
+
+B 走到一个点并折返返回起点，路上有陷阱，在第一次经过s[i]秒后会触发，出发后无法通过，问在可以返回起点的前提下，可以到达的最远点？
+显然二分加模拟,二分上界就是只考虑最远的陷阱，可以到达的最远点。check内部计算在当前最远点下，到达各个陷阱的时刻，与各个陷阱除法的时刻比较，判断能否通过所有陷阱。
+
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=3e5+10;
+int a[N],h[N],sum[N],len[N];
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int d[N],s[N],n;
+bool check(int x){
+	rep(i,1,n)
+		if(d[i]-1+s[i]<=2*(x-1)-(d[i]-1))return 0;
+                //左边是触发时间，出发点是1，因此需要-1，右边是折返后到达该点的时刻，等于总路程减去起点到该点的距离
+	return 1;//全都能通过，这个值是可行解
+}
+int main(){
+	int t=rd();
+	while(t--){
+		n=rd();
+		rep(i,1,n)d[i]=rd(),s[i]=rd();
+		int l=1,r=d[n]+s[n]/2+1;
+		while(l<=r){
+			int mid=l+r>>1;
+			if(check(mid))l=mid+1;
+			else r=mid-1;
+		}
+		cout<<r<<endl;
+	}
+}
+
+C 
+问能否找到a,b，a,b不互质,a+b在[l,r]之间。很多时候关键在于看问题的角度，如果我们枚举a,b，看哪些组合的和在区间内，再检验他们的最大公因子是不是1，复杂度是难以想象的。但如果枚举[l,r]之间的数，看他们能不能分成两个不互质的因子，计算量就小多了。更进一步，模运算有一个性质，就是减去mod值不影响结果，因此gcd(a,l-a)=gcd(a,l)，因此我们就把一个数l能不能分成两个不互质的因子，转化为了能不能找到一个a<l，a,l不互质。再进一步，要找一个比l小的，不互质的数，l不为1的因子不就符合这个条件吗？因此问题转化成了能不能找到l的一个不为1的因子，我们可以遍历l,r之间的所有数，对他们用试除法寻找不为1的因子，一旦有一个数找到一个因子，就成功了。
+并且对于偶数l，他可以分成两个偶数的和，而两个偶数一定有公因子2，也就是说把l分成两个偶数就满足条件了，不需要用上述方法。
+另一个特例是r<=3的情况,显然1，2，3都不可能满足题意。
+
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int main(){
+	int t=rd();
+	while(t--){
+		int l=rd(),r=rd();
+		if(r<=3)cout<<-1<<endl;
+		else{
+			bool flag=0;
+			rep1(i,r,l)//遍历区间内所有数
+				if(i%2==0){
+					cout<<i/2<<' '<<i/2<<endl;//偶数的话除以二得到的两个数一定不互质
+					flag=1;
+					break;//找到一个答案就能结束
+				}
+				else{
+					rep(j,2,sqrt(i))//如果是奇数用试除法
+						if(i%j==0){
+							flag=1;
+							cout<<j<<' '<<i-j<<endl;//找到一个因子，就是一种分割
+							break;
+						}
+					if(flag)break;
+				}
+			if(flag==0)cout<<-1<<endl;//遍历完了都没找到，失败
+		} 
+	} 
+}
+
+
+D 两个从一个排列中选出下标是x,y倍数的元素组成两个序列，要使这两个序列和的差最大。初始排列是任意的，很容易想到应该把大的数都安排在下标为x的倍数的位置上，小的数都安排在下标为y的倍数的位置上，只需要算出x,y的倍数的下标个数就行了。问题是可能有下标同时是x和y的倍数，这样的位置不管安排什么数，都会同时出现在x,y序列中，做差的时候就减掉了，可以忽略。因此我们要做的是找到1-n内x,y的倍数的位置数，以及同时是xy倍数的位置数。
+x,y的倍数的位置数整除就行，同时是xy的倍数的位置数，需要用n除以xy的最小公倍数，因此我们还需要写个函数计算最小公倍数。计算最小公倍数的一个朴素方法就是先用试除法将两个数分解为质因数，然后把所有出现的质因数的最高次项乘起来，就是两个数的最小公倍数，由于质因数的出现不规律，存质因数和次数最好离散化，用map就好。
+
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=3e5+10;
+int a[N],h[N],sum[N],len[N];
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+ll min_co_mult(int x,int y){
+	map<int,int>a,b;
+	ll ans=1;
+	for(int i=2;i*i<=x;i++)
+		if(x%i==0){
+			a[i]=0;
+			while(x%i==0)x/=i,a[i]++;
+		}
+	if(x!=1)a[x]=1;
+	for(int i=2;i*i<=y;i++)
+		if(y%i==0){
+			b[i]=0;
+			while(y%i==0)y/=i,b[i]++;
+		}
+	if(y!=1)b[y]=1;//分别分解质因数
+	for(auto i:b)a[i.first]=max(a[i.first],i.second);
+        //把两个数的质因数合起来，如果b中的这个因子a中也有，取较高次数，如果没有，取b中次数
+	for(auto i:a)ans*=pow(i.first,i.second);//全按最高次数乘起来就是最小公倍数
+	return ans;
+}
+int main(){
+	int t=rd();
+	while(t--){
+		int n=rd(),x=rd(),y=rd();
+		int nx=n/x;
+		int ny=n/y;
+		int nxy=n/min_co_mult(x,y);//重合的位置数
+		//cout<<nx<<' '<<ny<<' '<<nxy<<endl;
+		nx-=nxy,ny-=nxy;//减掉重合的
+		ll sy=1ll*(1+ny)*ny/2;//y是减数，尽量小
+		ll sx=1ll*(n+n-nx+1)*nx/2;//x是被减数，尽量大
+		//cout<<sx<<' '<<sy<<endl;
+		cout<<sx-sy<<endl;//可以实现他俩的差尽量大
+	}
+}
+
+
+G 可以把两个数及其之间的数都乘起来，只能执行一次该操作。使操作之后整个数列的元素和最大。最多2e5个元素，元素最大1e9，可以估计出元素和最大2e14，如果元素的积大于这个上界，一定是尽可能多地执行乘法更优，但不是所有元素都乘起来最优，因为如果乘数序列的开头和结尾是1，乘上1对结果没有贡献，还不如不乘这个1，而是把它加进来。开始没注意到这点，卡了好久。正确做法是分别从头尾开始找，找到第一个非1数，作为乘法序列的开头和结尾。
+
+如果元素的积小于这个上界，就不找最大乘数序列然后全乘起来，而是需要枚举所有可能的乘数序列的起点和终点，然后比较哪种乘法最大，因为可能有些数加进来比乘进去要大，比如21112，虽然2可以乘2，但中间的1显然加进去更大。至于这种枚举的复杂度，由于这种情况是在所有元素的积小于等于2e14的前提下进行的，而2e14实际上没有多大，不会超过2的60次方，也就是说大于等于2的数不会超过60个，而只有大于等于2的数作为乘数序列的边界才是有意义的，这实际上在第一种情况中已经分析过，如果1是边界，由于1对积没有贡献，还不如扩大边界，找到外边的非1数，或者缩小边界，不乘1，而是把1加进来。因此可以作为乘数序列起点和终点的点不会超过60个，双重循环枚举的话也不会超过360种情况，这是可以接受的。具体操作就是利用前缀和和前缀积，枚举所有可能的边界，然后找到前缀积减前缀和最大的情况，此时可以使操作后所有元素和最大。
+另外，对于全1序列，显然不该把任何数乘起来，应该直接全加起来，乘数序列的起点应该等于终点。可以把起点和终点初始化为两个相等的数，这样如果出现全1，由于没有一个区间的积大于和，不会更新起点和终点，会直接输出初始值。
+
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int a[N],pos[N];
+ll sum[N],pro[N];
+int main(){
+	int t=rd();
+	pro[0]=1;
+	while(t--){
+		int n=rd();
+		unsigned long long prd=1;
+		rep(i,1,n){
+			a[i]=rd();
+			if(prd<=1e14)prd*=a[i];
+		}
+		if(prd>1e14){//如果积超过和的上界
+			int l=1,r=n;
+			for(;a[l]==1;l++);
+			for(;a[r]==1;r--);
+			cout<<l<<' '<<r<<endl;//找到最大的边界不为1的序列乘起来，分别从头尾寻找第一个不为1的数
+		}
+		else{
+			int now=0;
+			rep(i,1,n){
+				sum[i]=sum[i-1]+a[i];
+				pro[i]=pro[i-1]*a[i];//维护前缀和前缀积
+				if(a[i]>1)pos[++now]=i;//找到所有不为1的数的位置
+			}
+			//rep(i,1,n)cout<<sum[i]<<' ';
+			//cout<<endl;
+			//rep(i,1,n)cout<<pro[i]<<' ';
+			//cout<<endl; 
+			//rep(i,1,now)cout<<pos[i]<<' ';
+			//cout<<endl;
+			ll mx=-1;
+			int posl=1,posr=1;//初始值给两个相等的位置，如果下面没更新就会直接输出这组值
+			rep(i,1,now)//遍历所有边界不为1的乘数序列
+				rep(j,i+1,now){
+					//cout<<pos[i]<<' '<<pos[j]<<endl;
+					if(pro[pos[j]]/pro[pos[i]-1]-(sum[pos[j]]-sum[pos[i]-1])>mx){
+						mx=pro[pos[j]]/pro[pos[i]-1]-(sum[pos[j]]-sum[pos[i]-1]);
+						posl=pos[i],posr=pos[j];//寻找积减和最大的区间
+					}
+				}
+			cout<<posl<<' '<<posr<<endl;
+		}
+	}
+}
