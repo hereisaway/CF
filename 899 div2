@@ -1,0 +1,118 @@
+A bi!=ai,并且b严格递增，求bn的最小值。严格递增，求最小值，那么每次最好只加1
+但又不能相同，故若ai = bi-1 + 1，则bi取ai + 1 
+又要都是正数，那么b1最好取1，如果a1 = 1，就取2
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int solve(void){
+	int n=rd();
+	int p=rd(),t;
+	if(p!=1)t=1;
+	else t=2;
+	rep(i,2,n){
+		int p=rd();
+		if(t+1!=p)t++;如果加一不等于ai，就加一
+		else t=p+1;如果等，就取ai + 1
+	}
+	return t;
+}
+int main(){
+	int t=rd(); 
+	while(t--){
+		cout<<solve()<<endl;
+	}
+}
+B 给n个集合，其中取一些集合并起来得到c，问c不等于所有集合并起来的前提下,c的元素个数最大为多少
+只能说枚举也是有学问的，虽然不同的枚举方式都能遍历所有状态，但需要的时间是不一样的。
+比如这里如果枚举每个集合是否在c中，那么复杂度是指数级别的，因为你不能确定需要几个集合取并，
+那么极端情况下需要先遍历集合个数，再遍历集合组合，也就是c(n,1)+c(n,2)+……+c(n,n)
+这就来到了2^n。n最大50，这已经远超1e9了。
+但如果遍历的是集合中元素，由于最大的并集不等于所有的并起来，因此最大的并集至少会少一个元素，
+那么我们遍历每个元素少不少，实际上也能遍历所有不为全集的并集。
+最多有50种元素，取并集最长需要50 * 50，最大复杂度也就是1e5！
+
+枚举也是门学问
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int solve(void){
+	int n,mx=-1;
+	bool book[55]={0};
+	cin>>n;
+	vector<int>s[n+1];
+	rep(i,1,n){
+		int k,t;
+		cin>>k;
+		rep(j,1,k)cin>>t,s[i].push_back(t),book[t]=1;//记录每个集合的元素，
+    //记录每个数是否作为元素出现
+	}
+	//rep(i,1,20)cout<<book[i]<<' ';
+	//cout<<'\n';
+	rep(i,1,50)//遍历所有可能作为元素的数
+		if(book[i]){//如果这个数作为元素出现了
+			bool inset[55]={0};
+			int cnt=0;
+			rep(j,1,n)//遍历所有集合
+				if(find(s[j].begin(),s[j].end(),i)==s[j].end())//如果这个集合里没有这个元素
+					rep(k,0,s[j].size()-1)inset[s[j][k]]=1; //并进来，这个集合的所有元素记为在并集中
+			rep(j,1,50)cnt+=inset[j];	//记录总元素数
+			mx=max(mx,cnt);	//更新最大元素数
+			}
+	cout<<mx<<'\n';
+	return 0;
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
+
+
+
+ 
+
+ 
