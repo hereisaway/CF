@@ -1,0 +1,57 @@
+A 问是否存在一个区间，k是其中出现频率最高的数。
+实际上只要选只包含k的长度为1区间，k在其中出现频率一定是最高的
+因此只要数列中包含k，就能找到一个k出现频率最高的区间
+感觉智商被侮辱了。
+这个故事告诉我们注意条件和定义（长度为1的区间也是区间）
+或者说考虑边界（长度为1会怎样？）
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int solve(void){	
+	int n,k;
+	bool flag=0;
+	cin>>n>>k;
+	rep(i,1,n){
+		int t;
+		cin>>t;
+		if(t==k){
+			flag=1;
+		}
+	}
+	if(flag)cout<<"yes\n";
+	else cout<<"no\n";
+	return 0;
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
+
+
+
+ 
