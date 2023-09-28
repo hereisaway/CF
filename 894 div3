@@ -1,0 +1,210 @@
+A 问能否在一个字符矩阵中，每一列最多挑一个字母，拼出指定的字符串。
+由于每一列只能挑一个字符，再遍历每一列前都要检查已经找到几个字符，只有前面的字符都找到后，才能找当前字符
+另外最近有个奇怪的发现，加速后的cin似乎比快读还快，以及用'\n'换行比endl快
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int solve(void){
+	int n,m;
+	cin>>n>>m;
+	char a[n+5][m+5];
+	bool flag[4]={0};
+	rep(i,1,n)
+		rep(j,1,m)cin>>a[i][j];
+	rep(j,1,m){
+		bool ok[4];
+		ok[0]=1;
+		ok[1]=!flag[1]&&flag[0];//第一个找到才能找第二个
+		ok[2]=!flag[2]&&flag[0]&&flag[1];//前两个找到才能找第三个
+		ok[3]=!flag[3]&&flag[0]&&flag[1]&&flag[2];
+		rep(i,1,n){
+			if(ok[0])//可以找这个字符才找
+				if(a[i][j]=='v')
+					flag[0]=1;
+			if(ok[1])
+				if(a[i][j]=='i')
+					flag[1]=1;
+			if(ok[2])
+				if(a[i][j]=='k')
+					flag[2]=1;
+			if(ok[3])
+				if(a[i][j]=='a')
+					flag[3]=1;
+		}
+	}
+	bool ans=1;
+	rep(i,0,3)ans&=flag[i];
+	return ans;
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		if(solve())cout<<"YES\n";
+		else cout<<"NO\n";
+	}
+}
+
+B 又见构造题，把原数组中ai-1<=ai的ai挑出来组成b，现在根据b还原a。
+还是那句话，先找性质，构造，再证可行，不要想着顺着推出来。
+如果bi-1<=bi，那么他们可以是在原数组中就相邻的数，可以直接放进原数组，如果bi-1>bi，在原数组中他俩之间一定还有数字，
+我们需要在中间填一个数字，但注意，填进来的这个数字没有被选进b中，因此一定不满足大于等于左侧数这个性质，也就是要小于bi-1，
+那么最简单的构造方式就是再填一个bi，反正bi已经小于bi-1了。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int solve(void){
+	int n,a1,a2;
+	cin>>n;
+	cin>>a1;
+	vector<int>s;
+	s.push_back(a1);
+	rep(i,2,n){
+		cin>>a2;
+		if(a2>=a1)s.push_back(a2);//大于等于前面的数，符合b数组选数的要求，可以在a数组中就相邻，直接放回去
+		else s.push_back(a2),s.push_back(a2);//如果不满足，在中间放一个小于等于bi-1的数，可以就放bi
+		a1=a2;
+	}
+	cout<<s.size()<<'\n';
+	for(int i:s)cout<<i<<' ';
+	cout<<'\n';
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve();
+	}
+}
+C 问沿着y=x反转后是否和原来的形状相同。很多看似很简单的问题，虽然可以O(n^2)暴力解决，
+但如果想加速，一下子就变复杂了。
+如果原始图a是严格递减的，那么a[i]在反转后，实际上使得a[i+1]到a[i]列的高度都为i。
+如果a只是不增的，那么对于a[i]=a[i+1]，远离其实和上面一样，最终只会让a[i]一列的高度为i
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int solve(void){
+	int n;
+	cin>>n;
+	int a[n+10],b[n+10];
+	rep(i,1,n)cin>>a[i];
+	if(a[1]!=n){
+		cout<<"NO\n";
+		return 0;
+	}
+	rep(i,1,a[n])b[i]=n;//没有n+1列，因此单独处理第n列
+	rep1(i,n-1,1){
+		if(a[i]>a[i+1])
+			rep(j,a[i+1]+1,a[i])b[j]=i;	
+	}
+	rep(i,1,n)if(a[i]!=b[i]){//比较是否完全一样
+		cout<<"NO\n";
+		return 0;
+	}
+	cout<<"YES\n";
+	return 0;
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve();
+	}
+}
+
+D n个球选两个，问恰好有k种组合需要多少个球？n个球可以相同也可以不同。
+如果全部不同，组合种类就是组合数，但可能不满足恰好有k种组合。
+因此先选不同的球，使组合数在不超过k的情况下尽量接近k，然后剩下的几种组合，可以通过相同球的组合填充，
+也就是给球堆中加相同球，每给一种只有一个的球加一个，就会恰好增加一种组合。
+因此可以用二分找到组合数不超过k的，互不相同的最大球数，然后再这个基础上加入相同球使得组合数达到k
+再次出现了可恶的1e18，选择python
+test=input()
+test=int(test)
+for i in range(test):
+    n=input()
+    n=int(n)
+    l=1
+    r=1e12
+    r=int(r)//找到组合数不超过k的最大互不相同球数
+    while l<=r:
+        mid=(l+r)//2
+        if(mid*(mid-1)/2>n):
+            r=mid-1
+        else:
+            l=mid+1
+    t=r*(r-1)//2
+    print(n-t+r)//剩余n-t种组合用相同球，没种组合需要加一个球
+
+ 
+
+
+ 
+
+
+ 
