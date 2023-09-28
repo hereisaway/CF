@@ -1,0 +1,67 @@
+D 题目顺序可以任意排列，删掉一些题目，使任意相邻题目难度差的绝对值不超过k。
+其实也就是要找相邻元素差的绝对值不超过k的最长序列。由于顺序可以随意修改，先排序，然后从后往前递推。
+和之前那个相邻高度能整除才能摘果子的题的预处理len，有点类似，由于要求从每个点开始，满足某些性质的最长序列，
+暴力一定是n^2的，所以需要递推。又由于序列要求的性质，是每个元素和后边的元素需要满足某些性质，在序列头部添加元素可以利用后面序列的结果，
+因此从后往前递推，最终实现O(n)的复杂度。
+
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+void solve(void){	
+	int n,k;
+	cin>>n>>k;
+	int a[n+2];
+	a[n+1]=2e9+10;
+	rep(i,1,n)cin>>a[i];
+	sort(a+1,a+n+1);
+	//rep(i,1,n)cout<<a[i]<<' ';
+	//cout<<'\n';
+	int mx=-1;
+	int len[n];
+	len[n]=1;//初始条件
+	rep1(i,n-1,1)
+		if(a[i+1]-a[i]<=k)len[i]=len[i+1]+1;//从后往前递推
+		else len[i]=1;
+	//rep(i,1,n)cout<<len[i]<<' ';
+	//cout<<'\n';
+	rep(i,1,n)mx=max(mx,len[i]);//最后找满足条件的最长序列
+	cout<<n-mx<<'\n';
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
+E 在基础的正方形外边加边框，求边框长度，使边框和原始正方形的总面积恰等于c。
+求满足某个条件的最大值/最小值/值，且该条件是否满足具有单调性，可以O(1)检验是否满足，一眼二分
+然而这题的难点在于c最大1e18，二分在没到答案，mid偏大时,用当前mid算出来的总面积可能大于1e18，而1e18已经是long long的上限了
+cf似乎又不支持__int128，于是我选择用python。
+虽然python常数大，运行时间和空间一般都是c的10倍以上，但是python编译器会帮我们安排变量的存储和运算方式，从而使int没有上限，
+编程中不再需要考虑溢出问题
+
+
+ 
