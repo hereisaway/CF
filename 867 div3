@@ -39,10 +39,15 @@ int main(){
 		cout<<ans<<endl;
 	}
 }
-B 问存不存在一个区间，k在这个区间中出现的频率最大。
-k在只包含自身的，长度为1的区间中出现频率一定是最大的。因此只要出现k，就一定存在一个区间满足要求
-感觉智商被羞辱了。
-这个故事告诉我们仔细读题，理解定义（长度为1的区间也是区间），并且多考虑边界条件（区间长度长度1）
+B 数列的美丽值使所有相邻元素对乘积的最大值，可以删除元素。
+显然就是要找元素对乘积的最大值，不一定要相邻，可通过删除元素使他们最终相邻。
+难点在于可能有负数，两个负数的乘积是正的，也可能冲击最大值。
+因此对于正数和负数分别放在两个数组里，然后分别取两个数组绝对值最大的两个元素，计算乘积
+最终最大值一定是这两个积种较大的。
+另一个难点是边界情况，就是可能这个数列凑不够两个正数，两个负数，可能只有一个正数一个负数，
+那么此时最大乘积就是这两个数的乘积。
+开始没想到这点，还以为自己思路错了，其实前面的思路都是对的。
+这个故事告诉我们，一定要考虑边界。
 #include<bits/stdc++.h>
 using namespace std;
 #define db double
@@ -80,7 +85,7 @@ int main(){
 			if(c[i]>0)a.push_back(c[i]);
 			else b.push_back(-c[i]);
 		}
-		if(n==2){
+		if(n==2){//特殊情况！！特判
 			cout<<c[1]*c[2]<<'\n';
 			continue;
 		}
@@ -101,6 +106,119 @@ int main(){
 		cout<<ans<<'\n';
 	}
 }
+C 没啥好说的，几何递推。唯一的收获是这递推题一定要动笔，先写几组小数据找规律
+找到数学公式了再开始写代码；以及多项式最好写成加法多，乘法少的形式，算起来更快
+比如x ^ 2 + x可以写成x* (x + 1)
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int main(){
+	int test;
+	ios::sync_with_stdio(0);
+	cin.tie(0),cout.tie(0);
+	cin>>test;
+	while(test--){
+		ll n;
+		cin>>n;
+		n-=3;
+		ll ans=17+n*(n+8);
+		cout<<ans<<'\n';
+	}
+}
+E 给一个字符串，问能否通过交换字符把它变成没有任何一对位置对称的字符串？
+如果能，最少需要交换几次？
+首先长度为奇数的字符串不可能，因为中间位置根据这个定义永远是对称的
+长度为偶数的，如果有一种字符的数量超过总字符数量的一半，也不可能，
+因为这种字符就算都集中在一边，也装不下，一定会至少占据一组对称的位置
+最后是对于可行的数组，求最少需要换几次。
+这里不能马虎，多实验几次会发现，交换两个字符位置，实际上最多可以破坏两组对称，
+例如abba->baba，只要每组对称都挑一个交换就行。
+但如果这两组对称的字符相同，这样的操作就一组对称都破坏不了了，比如aaaa，交换左边两个a，
+一个对称都破坏不了。这种时候就只能去和其它字符不同的对称交换。
+如果还存在其它字符不同的对称，就按abba的方法交换，一次破坏两个
+如果不存在了，就只能找不对称的字符交换，例如abca->baca，这样一次只能破坏一组对称了
+想要用最少的步数破坏对称，显然需要优先采用第一种方法，一次破坏两组不同对称
+最后如果剩下一些相同对称未被破坏，就只能采取第二种方法了，一次破坏一组。
+最后会剩下的相同对称一定是初始对称对数最多的那一种，因此需要计算各个字母的初始对数，然后找最大
+最后先用其他不同对称破坏最大对数的字母，最后剩下的相同对称用非对称字符破坏
+因此如果最大对数不超过总对称数/2的话，操作数就是总对数/2，全采用对称
+如果超过的话，先用第一种，在用第二种，总操作数是最大对数
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int solve(void){
+	int n,cnt=0,mx=-1;
+	int num[30]={0},same[30]={0};
+	cin>>n;
+	string s;
+	cin>>s; 
+	if(n%2==1)return -1;//长度为奇数，不可能
+	rep(i,0,n-1){
+		if(s[i]==s[n-i-1])cnt++,same[s[i]-'a']++;
+		num[s[i]-'a']++;
+	}
+	cnt/=2;
+	rep(i,0,25)mx=max(mx,num[i]);
+	if(mx>n/2)return -1;//如果有一种对称字母数量超过总字母一半，不可能
+	if(cnt==0)return 0;
+	mx=-1;
+	rep(i,0,25)mx=max(mx,same[i]/2);//统计各个字母最大对称数
+	if(mx*2>cnt)return mx;//如果最大对数超过总对称数的一半
+	else return (cnt+1)/2; 
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		cout<<solve()<<'\n';
+	}
+}
+
+
+
+
 
 
 
