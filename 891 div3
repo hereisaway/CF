@@ -1,0 +1,144 @@
+A 把数列中数分成两组，问有没有一种分法，使两组的和的奇偶性parity相同。
+首先想到的就是一组只放偶数，一组只放奇数，这样划分简单，和的奇偶性也便于判断
+偶数的和永远是偶数，奇数个奇数的和是奇数，偶数个奇数的和是偶数，因此想让他们奇偶性相同
+只需要奇数个数是偶数。
+奇偶性真的很神奇。不需要关心数具体的大小，只要知道他们的奇偶性，就能知道他们的和的奇偶性。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define ull unsigned long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+/*int head[N],d[N];
+int cnt;
+struct node{
+	int v,w,next;
+}e[N];
+void add(int u,int v,int w){
+	e[++cnt].next=head[u];
+	e[cnt].v=v;
+	e[cnt].w=w;
+	head[u]=cnt;
+}*/
+void solve(void){	
+	int n;
+	cin>>n;
+	int cnt=0;
+	rep(i,1,n){
+		int t;
+		cin>>t;
+		if(t%2==1)cnt++;
+	}
+	if(cnt%2==0)cout<<"yes\n";
+	else cout<<"no\n";
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
+B 四舍五入，每一位都可以四舍五入，如果四舍五入后还能五入，就继续入，目标是使最终结果尽可能大
+分情况讨论，想要这一位入，要么是这一位初始值就大于等于5，那么直接入
+后面的位不用看了，这一位和后面位全0，前一位加一
+或者是这一位后面的位往上入后进位，使这一位进位，进位后大于等于5。
+考虑到每一位的进位结果都是由再后面的位决定的，如果想只算一遍的话，
+要么递归，要么从后往前迭代。
+初始数字长度最大2e5，递归爆栈了，只能迭代。
+考虑到第一种情况可以不看后面的，缩小讨论范围，先进行一次第一种情况的判定，把大于等于5的先入了
+后面就只用在这一位前面的位进行第二种情况的讨论了。
+
+边界问题是，如果第一位需要进位，则需要再前面加上一个数字
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define ull unsigned long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+/*int head[N],d[N];
+int cnt;
+struct node{
+	int v,w,next;
+}e[N];
+void add(int u,int v,int w){
+	e[++cnt].next=head[u];
+	e[cnt].v=v;
+	e[cnt].w=w;
+	head[u]=cnt;
+}*/
+void solve(void){	
+	string s;
+	cin>>s;
+	if(s[0]>='5'){
+		rep(i,0,s.size()-1)s[i]='0';
+		s="1"+s;//如果第一位需要进位，在头部加上一个"1"
+	}
+	else
+		if(s.size()>=2){
+			rep(i,0,s.size()-1){//先看第一种情况
+				if(s[i]>='5'){
+					rep(j,i,s.size()-1)s[j]='0';
+					s[i-1]++;
+					break;//找到一个后面就都不用看了
+				}
+			}
+			//cout<<s<<'\n';
+			rep1(i,s.size()-1,0){//再从后往前进位
+				if(s[i]>='5'){
+					s[i]='0';
+					if(i)s[i-1]++;
+					else s="1"+s;
+					//cout<<s<<'\n';
+				}
+			}
+		}
+	cout<<s<<'\n';
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
