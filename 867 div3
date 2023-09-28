@@ -1,0 +1,110 @@
+A 从头开始选视频，往后切换一个视频需要1秒，每个视频都有一个效用，在截止时间k内需要选一个视频并看完，
+问要得到最大效用应该选第几个视频？
+由于切换到第i个视频需要i秒，播放完它也需要ai秒，那么选择看并看完第i个视频所需的时间实际上是ai+i秒
+而我们的时间只有k秒，因此需要在所有总消耗时间不超过k秒的视频里选效用最高的。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int a[N],b[N];
+int main(){
+	int t=rd(); 
+	while(t--){
+		int n=rd(),q=rd();
+		int ans=-1,mx=-1;
+		rep(i,1,n)a[i]=rd()+i-1;//时间加上切换到这个视频所需时间
+		rep(i,1,n)b[i]=rd();
+		rep(i,1,n){
+			if(a[i]<=q&&b[i]>mx)ans=i,mx=b[i];//在总所需时间不超过q的视频里选
+		}
+		cout<<ans<<endl;
+	}
+}
+B 问存不存在一个区间，k在这个区间中出现的频率最大。
+k在只包含自身的，长度为1的区间中出现频率一定是最大的。因此只要出现k，就一定存在一个区间满足要求
+感觉智商被羞辱了。
+这个故事告诉我们仔细读题，理解定义（长度为1的区间也是区间），并且多考虑边界条件（区间长度长度1）
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int t=rd(); 
+	while(t--){
+		vector<ll>a,b;
+		ll ans=0;
+		int n=rd();
+		ll c[n+10];
+		rep(i,1,n){
+			c[i]=rd();
+			if(c[i]>0)a.push_back(c[i]);
+			else b.push_back(-c[i]);
+		}
+		if(n==2){
+			cout<<c[1]*c[2]<<'\n';
+			continue;
+		}
+		sort(a.begin(),a.end());
+		sort(b.begin(),b.end());
+		//for(auto i:a)cout<<i<<' ';
+		//cout<<endl;
+		//for(auto i:b)cout<<i<<' ';
+		//cout<<endl;
+		if(a.size()>=2){
+			int sz=a.size();
+			ans=a[sz-1]*a[sz-2];
+		}
+		if(b.size()>=2){
+			int sz=b.size();
+			ans=max(ans,b[sz-1]*b[sz-2]);
+		}
+		cout<<ans<<'\n';
+	}
+}
+
+
+
+
+
+
+
