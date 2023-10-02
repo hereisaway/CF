@@ -1,0 +1,418 @@
+A 站在电梯不同的两级上，高度如果相同就可以聊天。现在给出电梯的阶数，每级的高度，主角的身高，和所有行人的身高。问有多少人可以和主角聊天？
+由于身高必须完全相同才能聊天，因此借助只有和主角身高差是电梯每一级高度整数倍的人才可以聊天。
+并且电梯级数优先，在同一级上也不能聊天，因此两人身高不能相同，身高差也不能超出电梯级数-1倍的电梯级高。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define ull unsigned long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+/*int head[N],d[N];
+int cnt;
+struct node{
+	int v,w,next;
+}e[N];
+void add(int u,int v,int w){
+	e[++cnt].next=head[u];
+	e[cnt].v=v;
+	e[cnt].w=w;
+	head[u]=cnt;
+}*/
+void solve(void){	
+	int n,m,k,H,cnt=0;
+	cin>>n>>m>>k>>H; 
+	rep(i,1,n){
+		int t;
+		cin>>t;
+		if(abs(t-H)%k==0&&abs(t-H)/k<=m-1&&abs(t-H)/k)cnt++;
+	}
+	cout<<cnt<<'\n';
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
+B 奇偶性相同的数之间可以换位，现在问能否将数组变成一个不减的序列。
+这种换位的问题关键是看每个数可以换位的范围，具体怎么换的不重要，因为在可以换的范围内两两都能换，最终一定能换成想要的形态。
+但在范围外就无计可施了。由于只能和奇偶性相同的数字换位，最终任何数都只能换到奇偶性相同的数字的位置上，那么想要最终可以换成不减序列
+奇数初始的位置和奇数排序后的位置就必须完全一样，例如排序前奇数在1，3，5三个位置上，排序后奇数也必须在1，3，5位置上。
+因此先记录奇数和偶数的初始位置，排序后再记录二者的位置，对比看是否完全相同。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define ull unsigned long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+/*int head[N],d[N];
+int cnt;
+struct node{
+	int v,w,next;
+}e[N];
+void add(int u,int v,int w){
+	e[++cnt].next=head[u];
+	e[cnt].v=v;
+	e[cnt].w=w;
+	head[u]=cnt;
+}*/
+void solve(void){	
+	int n;
+	cin>>n;
+	int a[n+10]={0};
+	vector<int>oddpos1,oddpos2,evenpos1,evenpos2;
+	rep(i,1,n){
+		cin>>a[i];
+		if(a[i]%2==0)evenpos1.push_back(i);
+		else oddpos1.push_back(i);//记录初始位置
+	}
+	/*for(int i:oddpos1)cout<<i<<' ';
+	cout<<'\n';
+	for(int i:evenpos1)cout<<i<<' ';
+	cout<<'\n';*/
+	sort(a+1,a+n+1);
+	rep(i,1,n){
+		if(a[i]%2==0)evenpos2.push_back(i);//记录排序后位置
+		else oddpos2.push_back(i);
+	}
+	/*for(int i:oddpos2)cout<<i<<' ';
+	cout<<'\n';
+	for(int i:evenpos2)cout<<i<<' ';
+	cout<<'\n';*/
+	bool flag=1;
+	if(oddpos1.size())
+		rep(i,0,oddpos1.size()-1)
+			if(oddpos1[i]!=oddpos2[i])flag=0;//一一对比
+	if(evenpos1.size())
+		rep(i,0,evenpos1.size()-1)
+			if(evenpos1[i]!=evenpos2[i])flag=0;
+	if(flag)cout<<"yes\n";//完全相同才满足要求
+	else cout<<"no\n";
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
+C 模拟题，主要考细心，能不能把边界想好
+相同数字为一组，一组长度必须等于k，开头和结尾的数字一定属于一组，两组之间不能重叠。
+如果开头或结尾的数字根本凑不够一组，肯定不行，如果开头和结尾的组有重叠，也不行。
+判断重叠可以用开头组的最后一个数字的位置和结尾组的第一个数字的位置对比，第一个位置小于第二个就是没有重叠。
+一个特例是开头和结尾数字属于同一组，这时就不用管两个位置的大小了。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define ull unsigned long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+/*int head[N],d[N];
+int cnt;
+struct node{
+	int v,w,next;
+}e[N];
+void add(int u,int v,int w){
+	e[++cnt].next=head[u];
+	e[cnt].v=v;
+	e[cnt].w=w;
+	head[u]=cnt;
+}*/
+void solve(void){	
+	int n,k,cnt1=0,cnt2=0,pos1=-1,pos2=-1;
+	cin>>n>>k;
+	int c[n+1]; 
+	rep(i,1,n)cin>>c[i];
+	bool flag=0;
+	rep(i,1,n){
+		if(c[i]==c[1])cnt1++;
+		if(cnt1==k&&flag==0){
+			pos1=i;
+			flag=1;
+		}
+	}
+	flag=0;
+	rep1(i,n,1){
+		if(c[i]==c[n])cnt2++;
+		if(cnt2==k&&flag==0){
+			pos2=i;
+			flag=1;
+		}
+	}
+	if(pos1==-1||pos2==-1)flag=0;//如果凑不够一组，不行
+	else if(c[1]==c[n])flag=1;//开头和结尾属于一组，可以
+	else if(pos1<pos2)flag=1;//不属于一组的话，没有重叠就行
+	else flag=0;//其他情况都不行
+	if(flag)cout<<"yes\n";
+	else cout<<"no\n";
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
+G 爬山，从高度为a的山出发，初始体力为e,从i到j,体力的改变量为hj-hi，问能否到达b。共有最多2e5组询问。
+仔细观察一下体力改变量，会发现从i到j，不论中间有多少座山，只要能到j，体力的该变量都是hj-hi，与中间无关。
+因此查询能否从a出发到b，初始体力为e，只需要遍历于a连通，并且高度小于等于ha+e的山，看b是否在其中就行了。
+单看这个查询确实很简单，问题在于有2e5组，每次查询最坏都是O(n)的，也即是2e5，合起来就是1e10了。
+
+这时就需要一个技巧：当查询有单调性时，可以对查询进行排序，先解决小问题。后面的大问题在小问题的基础上做一些修改就可以解决
+这样就不用每次都对整张图进行搜索了。
+具体来说，解决当前a,b,e查询时，需要计算出所有h<=ha+e的点的联通关系，并存起来
+解决下一个查询a1,b1,e1时，只要在上一次查询的结果上把ha+e<h<=ha1+e1的点的联通关系也加进来就行了。
+这样只需要遍历一次所有点就可以了。不过需要先对ha+e排序。因此整体复杂度是nlogn的。
+
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define ull unsigned long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+/*int head[N],d[N];
+int cnt;
+struct node{
+	int v,w,next;
+}e[N];
+void add(int u,int v,int w){
+	e[++cnt].next=head[u];
+	e[cnt].v=v;
+	e[cnt].w=w;
+	head[u]=cnt;
+}*/
+struct node{
+	int u,v,h;
+}e[N];
+struct query{
+	int pos,h,a,b;
+}op[N];
+int h[N],fa[N];
+bool cmp(node a,node b){
+	return max(h[a.u],h[a.v])<max(h[b.u],h[b.v]);
+}
+bool cmp1(query a,query b){
+	return a.h<b.h;
+}
+int find(int x){
+	if(fa[x]==x)return x;
+	return fa[x]=find(fa[x]);	
+}
+void merge(int u,int v){
+	fa[find(u)]=find(v);
+}
+void solve(void){	
+	int n,m;
+	cin>>n>>m;
+	rep(i,1,n)cin>>h[i]; 
+	rep(i,1,m){
+		int u,v;
+		cin>>u>>v;//最好先读取元数据，再赋值，不要直接读到e[i].u里面
+    e[i].u=u,e[i].v=v;
+		e[i].h=max(h[u],h[v]);
+	}
+	sort(e+1,e+1+m,cmp);//把边根据较高点高度排序
+	//cout<<"e sort:\n";
+	//rep(i,1,m)cout<<e[i].h<<' '<<e[i].u<<' '<<e[i].v<<'\n';
+	int q;
+	cin>>q;
+	rep(i,1,q){//读取询问
+		int a,b,e;
+		cin>>a>>b>>e;
+		op[i].pos=i;
+		op[i].h=h[a]+e;
+		op[i].a=a;
+		op[i].b=b;
+	}
+	sort(op+1,op+1+q,cmp1);//把询问根据ha+e排序
+	//cout<<"query sort:\n";
+	//rep(i,1,q)cout<<op[i].h<<' '<<op[i].pos<<'\n';
+	rep(i,1,n)fa[i]=i;//初始化并查集
+	int j=1;//双指针遍历所有联通关系
+	bool ans[q+1];
+	rep(i,1,q){
+		//cout<<i<<'\n';
+		while(e[j].h<=op[i].h&&j<=m){//把高度不超过当前ha+e的点的联通关系都加进来，注意j不能越界
+			merge(e[j].u,e[j].v);//
+			j++;
+			//cout<<e[j].u<<' '<<e[j].v<<'\n';
+		} 
+		//rep(k,1,n)cout<<fa[k]<<' ';
+		//cout<<'\n';
+		if(find(op[i].a)==find(op[i].b))ans[op[i].pos]=1;//现在所有小于等于ha+e的点的联通关系都已经加进来了，看a,b是否连通
+		else ans[op[i].pos]=0;//由于是处理的是排序后的查询，结果需要放进原始位置pos[i]
+	}
+	rep(i,1,q)
+		if(ans[i])cout<<"yes\n";
+		else cout<<"no\n";
+	cout<<'\n';
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
+E 每种药剂要么直接买，要么买其他药剂混合而成，有些药剂是免费的。求所有药剂的最小花费。
+题目保证了没有一种药剂最终会需要自己混合而成，也就是保证了药剂混合关系最终是一张无环图，这也就允许我们用dfs计算。
+#include<bits/stdc++.h>
+using namespace std;
+#define db double
+#define ll long long
+#define ull unsigned long long
+#define rep(i,x,y) for(int i=(x);i<=(y);i++)
+#define rep1(i,x,y) for(int i=(x);i>=(y);i--)
+#define inf 0x3f3f3f3f
+#define pll pair<int,int> 
+const int N=2e5+10;
+const int mod=1e9+7;
+int rd(void){
+	int x=0,f=1;
+	char c=getchar();
+	while(c>'9'||c<'0'){
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(c<='9'&&c>='0'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x*f;
+}
+/*int head[N],d[N];
+int cnt;
+struct node{
+	int v,w,next;
+}e[N];
+void add(int u,int v,int w){
+	e[++cnt].next=head[u];
+	e[cnt].v=v;
+	e[cnt].w=w;
+	head[u]=cnt;
+}*/
+vector<int>e[N];
+ll c[N];
+bool used[N];
+ll dfs(int x){
+	if(used[x])return c[x];//如果这种药剂已经被用过了，一定已经算出最小花费了
+	used[x]=1;//如果没用过，现场计算最小花费，标记为已用过。
+	ll cost=0;
+	for(int i:e[x])cost+=dfs(i);//计算混合的最小花费
+	if(!e[x].empty())c[x]=min(c[x],cost);//如果可以混合，把混合花费和直接买的花费对比，取最小值
+	return c[x];
+}
+void solve(void){	
+	int n,k;
+	cin>>n>>k;
+	rep(i,1,n)used[i]=0;
+	rep(i,1,n)cin>>c[i];//记录购买价格
+	rep(i,1,k){
+		int t;
+		cin>>t;
+		c[t]=0;//免费
+	}
+	rep(i,1,n)e[i].clear();
+	rep(i,1,n){
+		int m;
+		cin>>m;
+		rep(j,1,m){
+			int t;
+			cin>>t;
+			e[i].push_back(t);//记录混合配方
+		}
+	}
+	rep(i,1,n)dfs(i);
+	rep(i,1,n)cout<<c[i]<<' ';
+	cout<<'\n';
+} 
+int main(){
+	cin.tie(0),cout.tie(0);
+	ios::sync_with_stdio(0);
+	int test;
+	cin>>test;
+	while(test--){
+		solve(); 
+	}
+}
